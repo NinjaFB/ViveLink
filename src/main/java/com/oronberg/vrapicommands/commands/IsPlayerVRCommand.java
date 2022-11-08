@@ -26,7 +26,8 @@ public class IsPlayerVRCommand {
             literalargumentbuilder.then(Commands.literal("isvr").executes((command) ->
                 isvr(command, Collections.singleton(command.getSource().getPlayerOrException()))).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
                 isvr(command, Collections.singleton(EntityArgument.getPlayer(command, "target")))))).then(Commands.literal("getvec").then(Commands.literal(controller.getName()).executes((command) ->
-                getvec(command, Collections.singleton(command.getSource().getPlayerOrException()), controller))));
+                getvec(command, Collections.singleton(command.getSource().getPlayerOrException()), controller)).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
+                getvec(command, Collections.singleton(EntityArgument.getPlayer(command, "target")), controller)))));
 
 
         dispatcher.register(literalargumentbuilder);
