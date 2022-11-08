@@ -18,16 +18,16 @@ import net.minecraft.util.text.StringTextComponent;
 public class IsPlayerVRCommand {
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         LiteralArgumentBuilder<CommandSource> literalargumentbuilder = Commands.literal("vr");
-
-        literalargumentbuilder.then(Commands.literal("isvr")).executes((default_command) -> {
-            return isvr(default_command, Collections.singleton(default_command.getSource().getPlayerOrException()));
-        }).then(Commands.argument("target", EntityArgument.players()).executes((command) -> {
-            return isvr(command, Collections.singleton(EntityArgument.getPlayer(command, "target")));
-        }));
+        literalargumentbuilder.then(Commands.literal("isvr").executes((command) ->
+                isvr(command, Collections.singleton(command.getSource().getPlayerOrException()))).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
+                isvr(command, Collections.singleton(EntityArgument.getPlayer(command, "target"))))));
         dispatcher.register(literalargumentbuilder);
     }
 
     private static int isvr(CommandContext<CommandSource> command, Set<PlayerEntity> player) {
+        if(!player.stream().findFirst().isPresent()) {
+            command.getSource().sendFailure(new StringTextComponent("A thing happened and the command failed"));
+        }
         boolean isvr = VRPlugin.vrAPI.playerInVR(player.stream().findFirst().get());
         if(isvr) {
             command.getSource().sendSuccess(new StringTextComponent("Yes"), false);
