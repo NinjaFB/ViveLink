@@ -38,6 +38,6 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         files: |
           LICENSE.txt
-          /build/libs/*.jar
+          ./build/libs/*.jar
 
 
