@@ -37,5 +37,9 @@ jobs:
         
     - name: Automatic Releases
       uses: marvinpinto/action-automatic-releases@v1.2.1
+      with:
+        files: |
+          LICENSE.txt
+          vrapi*.jar
 
 
