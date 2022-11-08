@@ -24,9 +24,9 @@ import org.apache.logging.log4j.core.jmx.Server;
 
 public class IsPlayerVRCommand {
     public IsPlayerVRCommand(CommandDispatcher<CommandSource> dispatcher) {
-        dispatcher.register(Commands.literal("isvr").executes((command) -> {
+        dispatcher.register(Commands.literal("isvr").then(Commands.argument("targets", EntityArgument.players()).executes((command) -> {
             return isvr(command, Collections.singleton(command.getSource().getPlayerOrException()));
-        }));
+        })));
 
     }
 
