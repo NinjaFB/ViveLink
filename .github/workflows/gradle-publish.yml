@@ -31,11 +31,6 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
     - name: Run build with Gradle Wrapper
       run: ./gradlew build --scan
-    - name: Upload build reports
-      uses: actions/upload-artifact@v3
-      with:
-        name: build-reports
-        path: build/reports/
         
     - name: Automatic Releases
       uses: marvinpinto/action-automatic-releases@v1.2.1
@@ -43,6 +38,6 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         files: |
           LICENSE.txt
-          /build/reports/*.jar
+          /build/libs/*.jar
 
 
