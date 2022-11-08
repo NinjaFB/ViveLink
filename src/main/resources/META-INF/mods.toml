@@ -56,3 +56,8 @@ Commands to fetch data from this one vr api
     versionRange="[1.16.5,1.17)"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.vrapicommands]]
+    modId="vrapi"
+    mandatory=true
+    versionRange="(,1.4.0]"
