@@ -11,8 +11,7 @@ import net.minecraftforge.server.command.ConfigCommand;
 public class ModEvents {
     @SubscribeEvent
     public static void onCommandsRegister(RegisterCommandsEvent event) {
-        new IsPlayerVRCommand(event.getDispatcher());
-
+        IsPlayerVRCommand.register(event.getDispatcher());
         ConfigCommand.register(event.getDispatcher());
     }
 }
