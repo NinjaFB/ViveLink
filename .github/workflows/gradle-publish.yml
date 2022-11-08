@@ -33,7 +33,8 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: build
+        
+    - name: Automatic Releases
+      uses: marvinpinto/action-automatic-releases@v1.2.1
 
-    - name: Release GitHub Actions
-      uses: technote-space/release-github-actions@v6.2.2
 
