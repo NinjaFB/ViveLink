@@ -64,4 +64,22 @@ public class IsPlayerVRCommand {
         command.getSource().sendSuccess(new StringTextComponent(message), false);
         return 0;
     }
+    private static int getpos(CommandContext<CommandSource> command, Set<PlayerEntity> player, Controller controller) {
+        IVRPlayer vrplayer = VRPlugin.vrAPI.getVRPlayer(player.stream().findFirst().get());
+        Vector3d position;
+        if(controller == MAIN) {
+            position = vrplayer.getController0().position();
+        } else if (controller == OFF) {
+            position = vrplayer.getController1().position();
+        } else if (controller == HMD) {
+            position = vrplayer.getHMD().position();
+        } else {
+            command.getSource().sendFailure(new StringTextComponent("controller_type was incorrect type"));
+            return 1;
+        }
+
+        String message = "Controller" + controller.getName() + "'s position is " + position;
+        command.getSource().sendSuccess(new StringTextComponent(message), false);
+        return 0;
+    }
 }
