@@ -8,19 +8,30 @@ import java.util.Collections;
 import java.util.Set;
 
 import com.oronberg.vrapicommands.VRPlugin;
+import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.StringTextComponent;
 
+import static com.oronberg.vrapicommands.commands.Controller.*;
 
 public class IsPlayerVRCommand {
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         LiteralArgumentBuilder<CommandSource> literalargumentbuilder = Commands.literal("vr");
-        literalargumentbuilder.then(Commands.literal("isvr").executes((command) ->
+        for(Controller controller : Controller.values())
+            literalargumentbuilder.then(Commands.literal("isvr").executes((command) ->
                 isvr(command, Collections.singleton(command.getSource().getPlayerOrException()))).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
-                isvr(command, Collections.singleton(EntityArgument.getPlayer(command, "target"))))));
+                isvr(command, Collections.singleton(EntityArgument.getPlayer(command, "target")))))).then(Commands.literal("getvec").then(Commands.literal(controller.getName()).executes((command) ->
+                getvec(command, Collections.singleton(command.getSource().getPlayerOrException()), controller)).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
+                getvec(command, Collections.singleton(EntityArgument.getPlayer(command, "target")), controller))))).then(Commands.literal("getpos").then(Commands.literal(controller.getName()).executes((command) ->
+                getpos(command, Collections.singleton(command.getSource().getPlayerOrException()), controller)).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
+                getpos(command, Collections.singleton(EntityArgument.getPlayer(command, "target")), controller)))));
+
+
         dispatcher.register(literalargumentbuilder);
     }
 
@@ -34,6 +45,51 @@ public class IsPlayerVRCommand {
         } else {
                 command.getSource().sendSuccess(new StringTextComponent("no"), false);
         }
-        return 1;
+        return 0;
+    }
+
+    private static int getvec(CommandContext<CommandSource> command, Set<PlayerEntity> player, Controller controller) {
+        IVRPlayer vrplayer = VRPlugin.vrAPI.getVRPlayer(player.stream().findFirst().get());
+        if(vrplayer == null) {
+            command.getSource().sendSuccess(new StringTextComponent("target is not in VR"), false);
+            return 1;
+        }
+        Vector3d lookangle;
+        if(controller == MAIN) {
+            lookangle = vrplayer.getController0().getLookAngle();
+        } else if (controller == OFF) {
+            lookangle = vrplayer.getController1().getLookAngle();
+        } else if (controller == HMD) {
+            lookangle = vrplayer.getHMD().getLookAngle();
+        } else {
+            command.getSource().sendFailure(new StringTextComponent("controller_type was incorrect type"));
+            return 1;
+        }
+
+        String message = "Controller" + controller.getName() + "'s look angle is " + lookangle;
+        command.getSource().sendSuccess(new StringTextComponent(message), false);
+        return 0;
+    }
+    private static int getpos(CommandContext<CommandSource> command, Set<PlayerEntity> player, Controller controller) {
+        IVRPlayer vrplayer = VRPlugin.vrAPI.getVRPlayer(player.stream().findFirst().get());
+        if(vrplayer == null) {
+            command.getSource().sendSuccess(new StringTextComponent("target is not in VR"), false);
+            return 1;
+        }
+        Vector3d position;
+        if(controller == MAIN) {
+            position = vrplayer.getController0().position();
+        } else if (controller == OFF) {
+            position = vrplayer.getController1().position();
+        } else if (controller == HMD) {
+            position = vrplayer.getHMD().position();
+        } else {
+            command.getSource().sendFailure(new StringTextComponent("controller_type was incorrect type"));
+            return 1;
+        }
+
+        String message = "Controller" + controller.getName() + "'s position is " + position;
+        command.getSource().sendSuccess(new StringTextComponent(message), false);
+        return 0;
     }
 }
