@@ -1,10 +1,10 @@
-WIP Java mod to add command functionality to Vivecraft.
+# WIP Java mod to add command functionality to Vivecraft.
 -------------------------------------------
 Current and planned commands:
-/vr isvr [name]
-*/vr getvec [name]
-*/vr getpos [name
-(* = not fully implemented)
+<code>/vr isvr [name]</code>
+<code>*/vr getvec [name]</code>
+<code>*/vr getpos [name]</code>
+(* = not fully implemented/tested)
 Use:
 ==============================
 All commands are started with /vr.
