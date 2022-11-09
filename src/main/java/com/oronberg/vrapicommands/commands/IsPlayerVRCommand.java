@@ -50,6 +50,10 @@ public class IsPlayerVRCommand {
 
     private static int getvec(CommandContext<CommandSource> command, Set<PlayerEntity> player, Controller controller) {
         IVRPlayer vrplayer = VRPlugin.vrAPI.getVRPlayer(player.stream().findFirst().get());
+        if(vrplayer == null) {
+            command.getSource().sendSuccess(new StringTextComponent("target is not in VR"), false);
+            return 1;
+        }
         Vector3d lookangle;
         if(controller == MAIN) {
             lookangle = vrplayer.getController0().getLookAngle();
@@ -68,6 +72,10 @@ public class IsPlayerVRCommand {
     }
     private static int getpos(CommandContext<CommandSource> command, Set<PlayerEntity> player, Controller controller) {
         IVRPlayer vrplayer = VRPlugin.vrAPI.getVRPlayer(player.stream().findFirst().get());
+        if(vrplayer == null) {
+            command.getSource().sendSuccess(new StringTextComponent("target is not in VR"), false);
+            return 1;
+        }
         Vector3d position;
         if(controller == MAIN) {
             position = vrplayer.getController0().position();
