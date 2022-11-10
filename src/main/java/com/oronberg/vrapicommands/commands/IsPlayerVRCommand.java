@@ -25,9 +25,9 @@ public class IsPlayerVRCommand {
         for(Controller controller : Controller.values())
             literalargumentbuilder.then(Commands.literal("isvr").executes((command) ->
                 isvr(command, Collections.singleton(command.getSource().getPlayerOrException()))).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
-                isvr(command, Collections.singleton(EntityArgument.getPlayer(command, "target")))))).then(Commands.literal("getvec").then(Commands.literal(controller.getName()).executes((command) ->
-                getvec(command, Collections.singleton(command.getSource().getPlayerOrException()), controller)).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
-                getvec(command, Collections.singleton(EntityArgument.getPlayer(command, "target")), controller))))).then(Commands.literal("getpos").then(Commands.literal(controller.getName()).executes((command) ->
+                isvr(command, Collections.singleton(EntityArgument.getPlayer(command, "target")))))).then(Commands.literal("getrot()").then(Commands.literal(controller.getName()).executes((command) ->
+                getrot(command, Collections.singleton(command.getSource().getPlayerOrException()), controller)).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
+                getrot(command, Collections.singleton(EntityArgument.getPlayer(command, "target")), controller))))).then(Commands.literal("getpos").then(Commands.literal(controller.getName()).executes((command) ->
                 getpos(command, Collections.singleton(command.getSource().getPlayerOrException()), controller)).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
                 getpos(command, Collections.singleton(EntityArgument.getPlayer(command, "target")), controller)))));
 
@@ -48,25 +48,25 @@ public class IsPlayerVRCommand {
         return 0;
     }
 
-    private static int getvec(CommandContext<CommandSource> command, Set<PlayerEntity> player, Controller controller) {
+    private static int getrot(CommandContext<CommandSource> command, Set<PlayerEntity> player, Controller controller) {
         IVRPlayer vrplayer = VRPlugin.vrAPI.getVRPlayer(player.stream().findFirst().get());
         if(vrplayer == null) {
             command.getSource().sendSuccess(new StringTextComponent("target is not in VR"), false);
             return 1;
         }
-        Vector3d lookangle;
+        String rotation;
         if(controller == MAIN) {
-            lookangle = vrplayer.getController0().getLookAngle();
+            rotation = String.valueOf(vrplayer.getController0().getPitch())+","+String.valueOf(vrplayer.getController0().getYaw())+","+String.valueOf(vrplayer.getController0().getRoll());
         } else if (controller == OFF) {
-            lookangle = vrplayer.getController1().getLookAngle();
+            rotation = String.valueOf(vrplayer.getController1().getPitch())+","+String.valueOf(vrplayer.getController1().getYaw())+","+String.valueOf(vrplayer.getController1().getRoll());
         } else if (controller == HMD) {
-            lookangle = vrplayer.getHMD().getLookAngle();
+            rotation = String.valueOf(vrplayer.getHMD().getPitch())+","+String.valueOf(vrplayer.getHMD().getYaw())+","+String.valueOf(vrplayer.getHMD().getRoll());
         } else {
             command.getSource().sendFailure(new StringTextComponent("controller_type was incorrect type"));
             return 1;
         }
 
-        String message = "Controller" + controller.getName() + "'s look angle is " + lookangle;
+        String message = rotation;
         command.getSource().sendSuccess(new StringTextComponent(message), false);
         return 0;
     }
