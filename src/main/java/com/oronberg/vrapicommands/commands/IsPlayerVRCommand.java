@@ -25,7 +25,7 @@ public class IsPlayerVRCommand {
         for(Controller controller : Controller.values())
             literalargumentbuilder.then(Commands.literal("isvr").executes((command) ->
                 isvr(command, Collections.singleton(command.getSource().getPlayerOrException()))).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
-                isvr(command, Collections.singleton(EntityArgument.getPlayer(command, "target")))))).then(Commands.literal("getrot()").then(Commands.literal(controller.getName()).executes((command) ->
+                isvr(command, Collections.singleton(EntityArgument.getPlayer(command, "target")))))).then(Commands.literal("getrot").then(Commands.literal(controller.getName()).executes((command) ->
                 getrot(command, Collections.singleton(command.getSource().getPlayerOrException()), controller)).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
                 getrot(command, Collections.singleton(EntityArgument.getPlayer(command, "target")), controller))))).then(Commands.literal("getpos").then(Commands.literal(controller.getName()).executes((command) ->
                 getpos(command, Collections.singleton(command.getSource().getPlayerOrException()), controller)).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
@@ -41,9 +41,9 @@ public class IsPlayerVRCommand {
         }
         boolean isvr = VRPlugin.vrAPI.playerInVR(player.stream().findFirst().get());
         if(isvr) {
-            command.getSource().sendSuccess(new StringTextComponent("Yes"), false);
+            command.getSource().sendSuccess(new StringTextComponent("Target player is in VR."), false);
         } else {
-                command.getSource().sendSuccess(new StringTextComponent("no"), false);
+                command.getSource().sendSuccess(new StringTextComponent("Target player is not in VR."), false);
         }
         return 0;
     }
@@ -51,7 +51,7 @@ public class IsPlayerVRCommand {
     private static int getrot(CommandContext<CommandSource> command, Set<PlayerEntity> player, Controller controller) {
         IVRPlayer vrplayer = VRPlugin.vrAPI.getVRPlayer(player.stream().findFirst().get());
         if(vrplayer == null) {
-            command.getSource().sendSuccess(new StringTextComponent("target is not in VR"), false);
+            command.getSource().sendSuccess(new StringTextComponent("Target player is not in VR."), false);
             return 1;
         }
         String rotation;
@@ -62,7 +62,7 @@ public class IsPlayerVRCommand {
         } else if (controller == HMD) {
             rotation = String.valueOf(vrplayer.getHMD().getPitch())+","+String.valueOf(vrplayer.getHMD().getYaw())+","+String.valueOf(vrplayer.getHMD().getRoll());
         } else {
-            command.getSource().sendFailure(new StringTextComponent("controller_type was incorrect type"));
+            command.getSource().sendFailure(new StringTextComponent("controller_type was incorrect type."));
             return 1;
         }
 
@@ -73,7 +73,7 @@ public class IsPlayerVRCommand {
     private static int getpos(CommandContext<CommandSource> command, Set<PlayerEntity> player, Controller controller) {
         IVRPlayer vrplayer = VRPlugin.vrAPI.getVRPlayer(player.stream().findFirst().get());
         if(vrplayer == null) {
-            command.getSource().sendSuccess(new StringTextComponent("target is not in VR"), false);
+            command.getSource().sendSuccess(new StringTextComponent("Target player is not in VR."), false);
             return 1;
         }
         Vector3d position;
@@ -88,7 +88,7 @@ public class IsPlayerVRCommand {
             return 1;
         }
 
-        String message = "Controller" + controller.getName() + "'s position is " + position;
+        String message = position;
         command.getSource().sendSuccess(new StringTextComponent(message), false);
         return 0;
     }
