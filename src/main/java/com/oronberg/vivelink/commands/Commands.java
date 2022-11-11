@@ -1,4 +1,4 @@
-package com.oronberg.vrapicommands.commands;
+package com.oronberg.vivelink.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -7,28 +7,26 @@ import com.mojang.brigadier.context.CommandContext;
 import java.util.Collections;
 import java.util.Set;
 
-import com.oronberg.vrapicommands.VRPlugin;
+import com.oronberg.vivelink.VRPlugin;
 import net.blf02.vrapi.api.data.IVRPlayer;
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.StringTextComponent;
 
-import static com.oronberg.vrapicommands.commands.Controller.*;
+import static com.oronberg.vivelink.commands.Controller.*;
 
-public class IsPlayerVRCommand {
+public class Commands {
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
-        LiteralArgumentBuilder<CommandSource> literalargumentbuilder = Commands.literal("vr");
+        LiteralArgumentBuilder<CommandSource> literalargumentbuilder = net.minecraft.command.Commands.literal("vr");
         for(Controller controller : Controller.values())
-            literalargumentbuilder.then(Commands.literal("isvr").executes((command) ->
-                isvr(command, Collections.singleton(command.getSource().getPlayerOrException()))).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
-                isvr(command, Collections.singleton(EntityArgument.getPlayer(command, "target")))))).then(Commands.literal("getrot").then(Commands.literal(controller.getName()).executes((command) ->
-                getrot(command, Collections.singleton(command.getSource().getPlayerOrException()), controller)).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
-                getrot(command, Collections.singleton(EntityArgument.getPlayer(command, "target")), controller))))).then(Commands.literal("getpos").then(Commands.literal(controller.getName()).executes((command) ->
-                getpos(command, Collections.singleton(command.getSource().getPlayerOrException()), controller)).then(Commands.argument("target", EntityArgument.player()).executes((command) ->
+            literalargumentbuilder.then(net.minecraft.command.Commands.literal("isvr").executes((command) ->
+                isvr(command, Collections.singleton(command.getSource().getPlayerOrException()))).then(net.minecraft.command.Commands.argument("target", EntityArgument.player()).executes((command) ->
+                isvr(command, Collections.singleton(EntityArgument.getPlayer(command, "target")))))).then(net.minecraft.command.Commands.literal("getrot").then(net.minecraft.command.Commands.literal(controller.getName()).executes((command) ->
+                getrot(command, Collections.singleton(command.getSource().getPlayerOrException()), controller)).then(net.minecraft.command.Commands.argument("target", EntityArgument.player()).executes((command) ->
+                getrot(command, Collections.singleton(EntityArgument.getPlayer(command, "target")), controller))))).then(net.minecraft.command.Commands.literal("getpos").then(net.minecraft.command.Commands.literal(controller.getName()).executes((command) ->
+                getpos(command, Collections.singleton(command.getSource().getPlayerOrException()), controller)).then(net.minecraft.command.Commands.argument("target", EntityArgument.player()).executes((command) ->
                 getpos(command, Collections.singleton(EntityArgument.getPlayer(command, "target")), controller)))));
 
 
@@ -49,6 +47,9 @@ public class IsPlayerVRCommand {
     }
 
     private static int getrot(CommandContext<CommandSource> command, Set<PlayerEntity> player, Controller controller) {
+        if(!player.stream().findFirst().isPresent()) {
+            command.getSource().sendFailure(new StringTextComponent("A thing happened and the command fail."));
+        }
         IVRPlayer vrplayer = VRPlugin.vrAPI.getVRPlayer(player.stream().findFirst().get());
         if(vrplayer == null) {
             command.getSource().sendSuccess(new StringTextComponent("Target player is not in VR."), false);
@@ -56,11 +57,11 @@ public class IsPlayerVRCommand {
         }
         String rotation;
         if(controller == MAIN) {
-            rotation = String.valueOf(vrplayer.getController0().getPitch())+","+String.valueOf(vrplayer.getController0().getYaw())+","+String.valueOf(vrplayer.getController0().getRoll());
+            rotation = vrplayer.getController0().getPitch() +","+ vrplayer.getController0().getYaw() +","+ vrplayer.getController0().getRoll();
         } else if (controller == OFF) {
-            rotation = String.valueOf(vrplayer.getController1().getPitch())+","+String.valueOf(vrplayer.getController1().getYaw())+","+String.valueOf(vrplayer.getController1().getRoll());
+            rotation = vrplayer.getController1().getPitch() +","+ vrplayer.getController1().getYaw() +","+ vrplayer.getController1().getRoll();
         } else if (controller == HMD) {
-            rotation = String.valueOf(vrplayer.getHMD().getPitch())+","+String.valueOf(vrplayer.getHMD().getYaw())+","+String.valueOf(vrplayer.getHMD().getRoll());
+            rotation = vrplayer.getHMD().getPitch() +","+ vrplayer.getHMD().getYaw() +","+ vrplayer.getHMD().getRoll();
         } else {
             command.getSource().sendFailure(new StringTextComponent("controller_type was incorrect type."));
             return 1;
@@ -71,6 +72,9 @@ public class IsPlayerVRCommand {
         return 0;
     }
     private static int getpos(CommandContext<CommandSource> command, Set<PlayerEntity> player, Controller controller) {
+        if(!player.stream().findFirst().isPresent()) {
+            command.getSource().sendFailure(new StringTextComponent("A thing happened and the command failed"));
+        }
         IVRPlayer vrplayer = VRPlugin.vrAPI.getVRPlayer(player.stream().findFirst().get());
         if(vrplayer == null) {
             command.getSource().sendSuccess(new StringTextComponent("Target player is not in VR."), false);
@@ -88,8 +92,7 @@ public class IsPlayerVRCommand {
             return 1;
         }
 
-        String message = position;
-        command.getSource().sendSuccess(new StringTextComponent(message), false);
+        command.getSource().sendSuccess(new StringTextComponent(position.toString()), false);
         return 0;
     }
 }

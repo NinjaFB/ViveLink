@@ -1,4 +1,4 @@
-package com.oronberg.vrapicommands;
+package com.oronberg.vivelink;
 
 import net.blf02.vrapi.api.IVRAPI;
 import net.blf02.vrapi.api.VRAPIPlugin;
