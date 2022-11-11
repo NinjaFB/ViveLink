@@ -1,4 +1,4 @@
-package com.oronberg.vrapicommands.commands;
+package com.oronberg.vivelink.commands;
 
 public enum Controller {
     MAIN("mainhand"),

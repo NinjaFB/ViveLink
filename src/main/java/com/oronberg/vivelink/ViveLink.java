@@ -1,4 +1,4 @@
-package com.oronberg.vrapicommands;
+package com.oronberg.vivelink;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -19,14 +19,14 @@ import org.apache.logging.log4j.Logger;
 import java.util.stream.Collectors;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(VRAPICommands.MOD_ID)
-public class VRAPICommands
+@Mod(ViveLink.MOD_ID)
+public class ViveLink
 {
     public static final String MOD_ID = "vrapicommands";
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public VRAPICommands() {
+    public ViveLink() {
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         // Register the enqueueIMC method for modloading
